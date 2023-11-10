@@ -9,7 +9,7 @@ kubectl apply -f Database/.
 
 ### Login into `mongod-0` pod to Initiate Replication
 ```bash
-kubectl exec -it mongod-0 -- mongo
+kubectl exec -it mongod-0 -- mongosh
 ```
 
 ### Run Following Command to Initiate Replication
@@ -29,12 +29,46 @@ rs.initiate(
 
 #### For `mongod-1`
 ```bash
-kubectl exec mongod-1 -- sh -c "echo 'rs.secondaryOk()' > ~/.mongorc.js"
+# Login into pod
+kubectl exec mongod-1 -- /bin/bash
+
+# Login into mongodb with primary preferred
+mongosh mongodb://mongod-1.mongodb-service:27017/?readPreference=primaryPreferred
+
+# To get all entries
+db.getCollectionNames().map(
+    (name) => ({[name]: db[name].find().toArray()})
+)
 ```
 #### For `mongod-2`
 ```bash
-kubectl exec mongod-2 -- sh -c "echo 'rs.secondaryOk()' > ~/.mongorc.js"
+# Login into pod
+kubectl exec mongod-2 -- /bin/bash
+
+# Login into mongodb with primary preferred
+mongosh mongodb://mongod-2.mongodb-service:27017/?readPreference=primaryPreferred
+
+# To get all entries
+db.getCollectionNames().map(
+    (name) => ({[name]: db[name].find().toArray()})
+)
 ```
+
+## If you want to change primary
+### Eg: 
+- #### mongod-0 - SECONDARY // want it to be primary
+- #### mongod-1 - SECONDARY
+- #### mongod-2 - PRIMARY
+
+### For `mongod-1`
+```bash
+kubectl exec mongod-1 -- mongosh --eval 'rs.freeze(120)'
+```
+### For `mongod-2`
+```bash
+kubectl exec mongod-2 -- mongosh --eval 'rs.stepDown(120)'
+```
+### After above command `mongod-0` will be primary
 
 ### Apply Backend
 ```bash
