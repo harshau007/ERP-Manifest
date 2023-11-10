@@ -1,28 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    kompose.cmd: kompose convert --volumes hostPath -f docker-compose.yml -o Manifest/
-    kompose.version: 1.31.2 (a92241f79)
-  creationTimestamp: null
   labels:
-    io.kompose.service: backend
+      backend.service: backend
   name: backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      io.kompose.service: backend
+        backend.service: backend
   strategy: {}
   template:
     metadata:
-      annotations:
-        kompose.cmd: kompose convert --volumes hostPath -f docker-compose.yml -o Manifest/
-        kompose.version: 1.31.2 (a92241f79)
-      creationTimestamp: null
       labels:
-        io.kompose.network/erp-backend-default: "true"
-        io.kompose.service: backend
+        backend.service: backend
     spec:
       containers:
         - env:

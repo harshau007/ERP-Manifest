@@ -1,12 +1,8 @@
 apiVersion: v1
 kind: Service
 metadata:
-  annotations:
-    kompose.cmd: kompose convert --volumes hostPath -f docker-compose.yml -o Manifest/
-    kompose.version: 1.31.2 (a92241f79)
-  creationTimestamp: null
   labels:
-    io.kompose.service: backend
+      backend.service: backend
   name: backend
 spec:
   type: NodePort
@@ -16,6 +12,6 @@ spec:
       targetPort: 3000
       nodePort: 30100
   selector:
-    io.kompose.service: backend
+      backend.service: backend
 status:
   loadBalancer: {}
